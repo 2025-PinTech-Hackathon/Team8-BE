@@ -10,11 +10,6 @@ env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
-  ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
-  CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
-  ECS_APPSPEC: ${{ secrets.ECS_APPSPEC }}
-  ECS_APPLICATION: ${{ secrets.ECS_APPLICATION }}
-  ECS_DEPLOYMENT_GROUP: ${{ secrets.ECS_DEPLOYMENT_GROUP }}
   TEST_IMAGE_NAME: fintory-server-test
 permissions:
   contents: read
@@ -22,7 +17,6 @@ permissions:
 
 jobs:
   deploy:
-    if: false
     name: Deploy
     runs-on: ubuntu-latest
     environment: development
