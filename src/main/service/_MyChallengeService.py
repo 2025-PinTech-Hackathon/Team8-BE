@@ -1,3 +1,4 @@
+from ast import List
 from datetime import date, timedelta
 from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,8 +14,9 @@ from src.main.repository.ChallengeRoomRepository import ChallengeRoomRepository
 from src.main.domain.model.Challenge import Challenge
 from src.main.repository.ChallengeRepository import ChallengeRepository
 from src.main.repository.CheckRepository import CheckRepository
-
-
+from src.main.repository.MemberRepository import MemberRepository
+from src.main.domain.dto.MyChallengeDto import Friend
+from src.main.domain.dto.MyChallengeDto import FriendsProgress
 class MyChallengeService:
     @staticmethod
     def create_room(session: AsyncSession, memberId:str, challengeId: int):
@@ -22,7 +24,7 @@ class MyChallengeService:
         member_challenge_room = MemberChallengeRoomRepository.get_by_member_id_and_challenge_id(session, memberId, challengeId)
 
         if len(member_challenge_room) != 0:
-            raise HTTPException(status_code=400, detail="이미 하고 있는 챌린지방입니다.")
+            raise   HTTPException(status_code=400, detail="이미 하고 있는 챌린지방입니다.")
         
         print("비어있는거 잘 작동")
         
@@ -88,4 +90,27 @@ class MyChallengeService:
 
         return myDetail
 
+    @staticmethod
+    def getFriendProgress(session:AsyncSession, memberId: str, roomId: int):
+        #Check로 가서 roomId이면서 memberId가 아난 애들의 memberId를 List로 받아오기
+        friend_ids_table: List[CheckTable] = CheckRepository.get_friend_ids(session, memberId, roomId)
+        
+        friendLists : List[Friend] = []
 
+        #progress를 각각 구해야함
+        for ids in friend_ids_table:
+            friend = MemberRepository.get_by_member_id(ids.memberId)
+
+            friend_progress=CheckRepository.get_progress(session, ids.memberId, roomId)
+        
+            friendDetail = Friend(
+                friendId=friend.memberId,
+                friendName=friend.memberName,
+                progress=friend_progress,
+            )
+
+            friendLists.append(friendDetail)
+
+        return FriendsProgress(
+            friends=friendLists
+            )

@@ -12,3 +12,11 @@ class MyChallengeRoomResDto(BaseModel):
     start: date
     end: date
     progress: int
+
+class Friend(BaseModel):
+    friendId: str
+    friendName: str
+    progress: int
+
+class FriendsProgress(BaseModel):
+    friends: List[Friend]
