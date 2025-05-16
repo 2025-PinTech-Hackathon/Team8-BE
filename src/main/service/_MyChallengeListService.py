@@ -4,6 +4,7 @@
 #이후에 dto에 정보 넣어서 보내주면 됨
 
 from ast import List
+import json
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 from typing import Optional
@@ -23,7 +24,14 @@ from src.main.domain.model.MemberEnum import InterestEnum
 from src.main.domain.dto._MyChallengeListDto import MyChallengeListResDto
 
 class MyChallengeListService:
-    def get_my_challenge_List(session: AsyncSession, member_id:str,tag: Optional[str], status: str ):
+    @staticmethod
+    def get_interest_enum_name_by_value(value: str) -> Optional[str]:
+        for enum_member in InterestEnum:
+            if enum_member.value == value:
+                return enum_member.name
+        return None
+
+    def get_my_challenge_List(session: AsyncSession, member_id:str,tag: Optional[str], status: ChallengeStatusEnum ):
         #먼저 유저 정보 불러오기
         member: Member = MemberRepository.get_by_member_id(session, member_id)
         
@@ -60,9 +68,10 @@ class MyChallengeListService:
             progress = CheckRepository.get_progress(session, member_id, room.roomId)
             if progress is None:
                 raise HTTPException(status_code=404, detail="challengeProgress 가 없습니다.")
-
+            print(f"chTags type: {type(challenge.chTags)}, value: {challenge.chTags}")
             # 조건 필터링 (tag, status)
-            if tag is not None and tag not in challenge.chTags:
+            tag_enum_name = MyChallengeListService.get_interest_enum_name_by_value(tag) if tag else None
+            if tag_enum_name and tag_enum_name not in challenge.chTags:
                 continue
             if status and room.status != status:
                 continue
