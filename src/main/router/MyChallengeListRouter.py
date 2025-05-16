@@ -16,7 +16,7 @@ router = APIRouter(
 
 @router.get("/myChallenges", response_model=MyChallengeListResDto)
 async def getChallenges(userId: str = Depends(get_current_user),
-                        tag: Optional[InterestEnum] = Query(None),
+                        tag: Optional[str] = Query(None),
                         status: ChallengeStatusEnum= Query(...),
                         session: AsyncSession = Depends(get_db)):
     return MyChallengeListService.get_my_challenge_List(session, userId, tag, status)
