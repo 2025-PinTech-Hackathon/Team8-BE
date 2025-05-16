@@ -1,5 +1,5 @@
 #entity 역할 파일
-from sqlalchemy import Column, String, BigInteger, 
+from sqlalchemy import Column, String, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from database import Base
