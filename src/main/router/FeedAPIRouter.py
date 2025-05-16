@@ -26,6 +26,7 @@ async def get_finance_feed(
         "publisherName": feed.publisherName,
         "content": feed.content,
         "createdAt": feed.createdAt.strftime("%Y-%m-%d %H:%M:%S") if feed.createdAt else None,
-        "updatedAt": feed.updatedAt.strftime("%Y-%m-%d %H:%M:%S") if feed.updatedAt else None
+        "updatedAt": feed.updatedAt.strftime("%Y-%m-%d %H:%M:%S") if feed.updatedAt else None,
+        "redirectUrl": feed.redirectUrl
     }
 
