@@ -47,6 +47,7 @@ jobs:
         id: run-test
         run: |
           docker run --rm \
+          -e DATABASE_URL="mysql+pymysql://localhost:3306" \
             ${{ env.TEST_IMAGE_NAME }}
       
       - name: Build, tag, and push image to Amazon ECR
