@@ -12,3 +12,6 @@ class MyChallengeRoomResDto(BaseModel):
     start: date
     end: date
     progress: int
+
+class InviteCodeResponseDto(BaseModel):
+    invitedCode: str
