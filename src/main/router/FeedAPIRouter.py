@@ -7,7 +7,7 @@ from src.main.domain.database import get_db
 from src.main.service.FeedService import FeedService
 
 FeedAPIRouter = APIRouter(
-    prefix="/feed",
+    prefix="/feeds",
     tags=["feed"]
 )
 
