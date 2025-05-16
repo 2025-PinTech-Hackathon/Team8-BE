@@ -10,8 +10,8 @@ from src.main.domain.model import (
     Member,
     Challenge,
     ChallengeRoom,
-    Code,
-    Check,
+    CodeTable,
+    CheckTable,
     Information,
     MemberChallengeRoom
 )

@@ -25,4 +25,4 @@ class Member(Base):
     )
 
     # Check와 1:N 관계 설정
-    check = relationship("Check", back_populates="member", cascade="all, delete-orphan")
+    checkTable = relationship("CheckTable", back_populates="member", cascade="all, delete-orphan")

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from fastapi.params import Query
 from src.main.auth.middlewares import get_current_user
 from domain.dto import MyChallengeListResDto
-from ..service.myChallengeListService import myChallengeListService
+from ..service.MyChallengeListService import MyChallengeListService
 
 router = APIRouter(
     prefix="/health",
@@ -18,4 +18,4 @@ async def health(user_id: str = Depends(get_current_user)):
 async def getChallenges(userId: str = Depends(get_current_user),
                         tag: Optional[str] = Query(None),
                         status: str= Query(...)):
-    return await myChallengeListService.get_my_challenges(userId, tag, status)
+    return await MyChallengeListService.get_my_challenges(userId, tag, status)

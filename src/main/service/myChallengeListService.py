@@ -32,8 +32,15 @@ class myChallengeListService:
         # 2. 유저가 참여 중인 challengeRoom_id 목록 조회
         joined_room_ids = await MemberChallengeRoomRepository.get_by_member_id(session,member_id)  # List[ChallengeRoom]
 
+        
+        if not joined_room_ids:
+            raise HTTPException(status_code=404, detail="challengeID가 없습니다.")
+
         # 2. 해당 room_id에 해당하는 ChallengeRoom 객체들 조회
         rooms: List[ChallengeRoom] = await ChallengeRoomRepository.get_by_challenge_id(session, joined_room_ids)
+        
+        if not joined_room_ids:
+            raise HTTPException(status_code=404, detail="challengeRoom이 없습니다.")
         
         #MyChallengeSummaryDto하기
         myChallengeSummaryLists = List[MyChallengeSummaryDto] = []
@@ -41,7 +48,11 @@ class myChallengeListService:
         # ChallengeRoom 리스트를 순회
         for room in rooms:
             challenge: Challenge = await ChallengeRepository(session, room.challengeId)
+            if not challenge:
+                raise HTTPException(status_code=404, detail="challenge가 없습니다.")
             progress = await CheckRepository.get_progress(session, member_id, room.roomId)
+            if not progress:
+                raise HTTPException(status_code=404, detail="challengeProgress 가 없습니다.")
 
             # 조건 필터링 (tag, status)
             if tag is not None and tag not in challenge.chTags:
