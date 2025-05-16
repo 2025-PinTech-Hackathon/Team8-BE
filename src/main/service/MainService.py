@@ -124,7 +124,7 @@ class MainService:
                     challengeId=challenge.challengeId,
                     title=challenge.title,
                     description=challenge.content,
-                    tag=tag
+                    tag=InterestEnum[tag].value if tag in InterestEnum.__members__ else tag
                 ) for challenge in challenges
             ]
         )
@@ -151,7 +151,7 @@ class MainService:
                     challengeId=challenge.challengeId,
                     title=challenge.title,
                     description=challenge.content,
-                    tag=challenge.chTags[0] if challenge.chTags else "기타"
+                    tag=InterestEnum[challenge.chTags[0]].value if challenge.chTags and challenge.chTags[0] in InterestEnum.__members__ else challenge.chTags[0]
                 ) for challenge in challenges
             ]
         )
