@@ -5,6 +5,7 @@ from src.main.domain.dto.ChallengeResponseDto import UserChallengeResponse, Chal
 from src.main.domain.model.MemberEnum import InterestEnum
 from sqlalchemy import func
 from src.main.domain.model.Information import Information
+from src.main.domain.model.Challenge import Challenge
 
 class MainService:
     def __init__(self, db: Session):
@@ -98,24 +99,63 @@ class MainService:
             feeds=feeds
         )
     
-    def get_challenge_by_tag(self, member_id: str, tag: str) -> UserChallengeResponse:
+    def get_challenge_by_specific_tag(self, member_id: str, tag: str) -> UserChallengeResponse | None:
         member = self.repository.get_member_by_id(member_id)
-        if not member or tag not in member.interest:
+        if not member:
             return None
-        
-        challenges = self.repository.get_challenges_by_tag(tag)
+
+        user_interests = member.interest
+        if tag not in user_interests:
+            return None
+
+        # DB의 ch_tags는 ["SCHOLOARSHIP"] 형태로 저장되어 있으므로 변환 없이 그대로 사용
+        challenges = self.repository.db.query(Challenge).filter(
+            func.json_search(Challenge.chTags, 'one', tag) != None
+        ).all()
+
         return UserChallengeResponse(
             userName=member.name,
-            categories=member.interest,
+            categories=[
+                InterestEnum[item].value if item in InterestEnum.__members__ else item
+                for item in user_interests
+            ],
             challenges=[
                 ChallengeResponseDto(
+                    challengeId=challenge.challengeId,
                     title=challenge.title,
                     description=challenge.content,
                     tag=tag
-                )
-                for challenge in challenges
+                ) for challenge in challenges
             ]
         )
+    
+    def get_challenge_by_all_tags(self, member_id: str) -> UserChallengeResponse | None:
+        member = self.repository.get_member_by_id(member_id)
+        if not member:
+            return None
+
+        user_interests = member.interest
+        tag_keys = [tag for tag in user_interests if tag in InterestEnum.__members__]
+        tag_values = tag_keys  # 그대로 Enum 키로 검색 (ex: "TRAVEL")
+
+        challenges = self.repository.get_challenges_by_tag(tag_values)
+
+        return UserChallengeResponse(
+            userName=member.name,
+            categories=[
+                InterestEnum[item].value if item in InterestEnum.__members__ else item
+                for item in user_interests
+            ],
+            challenges=[
+                ChallengeResponseDto(
+                    challengeId=challenge.challengeId,
+                    title=challenge.title,
+                    description=challenge.content,
+                    tag=challenge.chTags[0] if challenge.chTags else "기타"
+                ) for challenge in challenges
+            ]
+        )
+
 
     def get_tags(self) -> list[str]:
         return self.repository.get_tags()
