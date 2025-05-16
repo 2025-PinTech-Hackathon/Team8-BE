@@ -37,7 +37,12 @@ class MainService:
         # Feed 생성 (tag가 None일 경우 info.tags[0] 사용)
         feeds = []
         for info in infos:
-            used_tag = tag_value if tag and tag.lower() != "null" else (info.tags[0] if info.tags else "기타")
+            used_tag_key = info.tags[0] if info.tags else "기타"
+            used_tag = (
+                InterestEnum[used_tag_key].value
+                if used_tag_key in InterestEnum.__members__
+                else used_tag_key
+            )
 
             feeds.append(
                 Feed(
@@ -48,7 +53,6 @@ class MainService:
                 )
             )
 
-        # Enum key → value로 변환해서 categories 출력 (예: "INVESTMENT" → "투자")
         categories = [
             InterestEnum[item].value if item in InterestEnum.__members__ else item
             for item in user_interests
@@ -82,7 +86,7 @@ class MainService:
                 informationId=info.informationId,
                 title=info.title,
                 content=info.content,
-                tag=tag  # 그대로 넣기
+                tag=InterestEnum[tag].value if tag in InterestEnum.__members__ else tag
             ) for info in infos
         ]
 
