@@ -2,8 +2,10 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi.params import Query
 from src.main.auth.middlewares import get_current_user
-from domain.dto import MyChallengeListResDto
-from ..service.MyChallengeListService import MyChallengeListService
+
+from src.main.domain.dto import MyChallengeListResDto
+from src.main.service.MyChallengeListService import MyChallengeListService
+
 
 router = APIRouter(
     prefix="/health",
