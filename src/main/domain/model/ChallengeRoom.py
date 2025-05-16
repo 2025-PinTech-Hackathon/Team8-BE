@@ -26,10 +26,10 @@ class ChallengeRoom(Base):
     )
 
     # Code와 1:1 관계 설정
-    code = relationship("Code", uselist=False, back_populates="challengeRoom")
+    codeTable = relationship("CodeTable", uselist=False, back_populates="challengeRoom")
 
     # Challenge와 N:1 관계
     challenge = relationship("Challenge", back_populates="challengeRoom")
 
      # Check와 1:N 관계
-    check = relationship("Check", back_populates="challengeRoom", cascade="all, delete-orphan")
+    checkTable = relationship("CheckTable", back_populates="challengeRoom", cascade="all, delete-orphan")
