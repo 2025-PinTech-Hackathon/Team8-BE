@@ -1,19 +1,28 @@
 from src.main.repository.MainRepository import MainRepository
-from src.main.domain.dto.InformationResponseDto import MemberInformationResponse, Feed
+from src.main.domain.dto.InformationResponseDto import UserInformationResponse, Feed
+from sqlalchemy.orm import Session
 
 class MainService:
-    def __init__(self):
-        self.repository = MainRepository()
+    def __init__(self, db: Session):
+        self.repository = MainRepository(db)
     
-    def get_information_by_category(self, category: str) -> MemberInformationResponse:
-        member = self.repository.get_member()
-        if not member or category not in member["categories"]:
+    def get_information_by_tag(self, member_id: str, tag: str) -> UserInformationResponse:
+        print("member_id (get_information_by_tag):", member_id)
+        
+        member = self.repository.get_member_by_id(member_id)
+
+        if not member or tag not in member.interest:
             return None
         
-        feeds = self.repository.get_feeds_by_category(category)
-        return MemberInformationResponse(
-            memberId = member["memberId"],
-            memberName = member["memberName"],
-            categories = member["categories"],
-            feeds = [Feed(**feed) for feed in feeds]
+        feeds = self.repository.get_feeds_by_tag(tag)
+
+        print("feeds:", feeds)
+
+        return UserInformationResponse(
+            memberId=member.memberId,
+            userName=member.name,
+            categories=member.interest,
+            feeds=[
+                Feed(title=feed.title or "", content=feed.content or "", tag=tag) for feed in feeds
+            ]
         )

@@ -9,7 +9,8 @@ async def get_current_user(x_auth_sub: Annotated[str | None, Header()] = None) -
             detail="Unauthorized"
         )
     try:
-        return uuid.UUID(x_auth_sub)
+        uuid.UUID(x_auth_sub)
+        return x_auth_sub
     except ValueError:
         raise HTTPException(
             status_code=401,

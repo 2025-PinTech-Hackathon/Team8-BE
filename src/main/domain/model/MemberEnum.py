@@ -32,3 +32,6 @@ class InterestEnum(str, Enum):
     INSURANCE = "보험"
     RETIREMENT = "노후"
     SALE_INFO = "분양정보"
+    CONSUMPTION = "소비"
+    FINANCIAL_EDUCATION = "금융교육"
+    INVESTMENT = "투자"

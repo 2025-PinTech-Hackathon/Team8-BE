@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
+from sqlalchemy import Enum as SqlEnum
 from src.main.domain.database import Base
 from sqlalchemy.orm import relationship
 
