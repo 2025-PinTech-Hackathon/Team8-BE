@@ -22,5 +22,5 @@ class MemberRepository:
         self.db.add(member)
         self.db.commit()
         self.db.refresh(member)
-
+        return member
         
