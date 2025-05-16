@@ -1,13 +1,15 @@
 from ast import List
 from datetime import date, timedelta
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 import random
 import traceback
+import sys
 
 from src.main.repository.MemberChallengeRoomRepository import MemberChallengeRoomRepository
 from src.main.domain.model.ChallengeRoom import ChallengeRoom
+from src.main.domain.model.CodeTable import CodeTable
 from src.main.domain.model._MemberChallengeRoom import MemberChallengeRoom
 from src.main.domain.model.CheckTable import CheckTable
 from src.main.domain.dto.MyChallengeDto import MyChallengeReqDto
@@ -19,9 +21,11 @@ from src.main.repository.CheckRepository import CheckRepository
 from src.main.repository.MemberRepository import MemberRepository
 from src.main.domain.dto.MyChallengeDto import Friend
 from src.main.domain.dto.MyChallengeDto import FriendsProgress
-from src.main.domain.dto.MyChallengeDto import InviteCodeResponseDto
 from src.main.domain.dto.MyChallengeDto import Day
 from src.main.domain.dto.MyChallengeDto import Days
+from src.main.domain.dto.MyChallengeDto import InviteCodeResponseDto, ParticipateResponseDto
+from src.main.domain.model.ChallengeStatusEnum import ChallengeStatusEnum
+
 
 class MyChallengeService:
     @staticmethod
@@ -124,16 +128,23 @@ class MyChallengeService:
     @staticmethod
     def get_invite_code(session: AsyncSession, room_id: int) -> InviteCodeResponseDto:
         try:
-            # 코드가 이미 존재하면 가져오고, 없으면 생성
+            room: ChallengeRoom = ChallengeRoomRepository.get_by_id(session, room_id)
+            if not room:
+                raise HTTPException(status_code=404, detail="해당 챌린지 방이 존재하지 않습니다.")
+
             existing_code = ChallengeRoomRepository.get_invite_code_by_room_id(session, room_id)
 
             if existing_code:
                 return InviteCodeResponseDto(invitedCode=existing_code.code)
 
-            # 랜덤 6자리 문자열 생성
             new_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
 
             ChallengeRoomRepository.create_or_update_invite_code(session, room_id, new_code)
+
+            if room.status == ChallengeStatusEnum.IN_PROGRESS:
+                room.status = ChallengeStatusEnum.RECRUITING
+                session.add(room)
+
             session.commit()
 
             return InviteCodeResponseDto(invitedCode=new_code)
@@ -159,3 +170,45 @@ class MyChallengeService:
 
         return Days(
             days=dayList)
+
+    @staticmethod
+    def participate_in_challenge(session, code: str, member_id: str) -> ParticipateResponseDto:
+        code_entry = session.execute(
+            select(CodeTable).where(CodeTable.code == code)
+        ).scalar_one_or_none()
+
+        if not code_entry:
+            raise HTTPException(status_code=404, detail="유효하지 않은 초대 코드입니다.")
+
+        room_id = code_entry.roomId
+
+        existing = session.execute(
+            select(MemberChallengeRoom).where(
+                (MemberChallengeRoom.memberId == member_id) &
+                (MemberChallengeRoom.roomId == room_id)
+            )
+        ).scalar_one_or_none()
+
+        if existing:
+            return ParticipateResponseDto(roomId=room_id, status="이미 참여한 챌린지입니다.")
+
+        new_entry = MemberChallengeRoom(memberId=member_id, roomId=room_id)
+        session.add(new_entry)
+
+        room: ChallengeRoom = session.execute(
+            select(ChallengeRoom).where(ChallengeRoom.roomId == room_id)
+        ).scalar_one()
+
+        if room.participants is None:
+            room.participants = 1
+        else:
+            room.participants += 1
+
+        # 인원이 5명이 되면 상태를 IN_PROGRESS로 변경
+        if room.participants >= 5 and room.status == ChallengeStatusEnum.RECRUITING:
+            room.status = ChallengeStatusEnum.IN_PROGRESS
+
+        session.add(room)
+        session.commit()
+
+        return ParticipateResponseDto(roomId=room_id, status="참여 완료")

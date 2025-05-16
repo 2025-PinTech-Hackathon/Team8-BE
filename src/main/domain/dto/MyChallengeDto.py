@@ -29,3 +29,9 @@ class Day(BaseModel):
 
 class Days(BaseModel):
     days: List[Day]
+class ParticipateResponseDto(BaseModel):
+    roomId: int
+    status: str
+
+class ParticipateRequestDto(BaseModel):
+    code: str
