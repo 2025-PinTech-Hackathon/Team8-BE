@@ -22,3 +22,10 @@ class FriendsProgress(BaseModel):
     friends: List[Friend]
 class InviteCodeResponseDto(BaseModel):
     invitedCode: str
+
+class ParticipateResponseDto(BaseModel):
+    roomId: int
+    status: str
+
+class ParticipateRequestDto(BaseModel):
+    code: str

@@ -7,7 +7,7 @@ from src.main.auth.middlewares import get_current_user
 from src.main.service._MyChallengeService import MyChallengeService
 from src.main.domain.dto.MyChallengeDto import MyChallengeReqDto
 from src.main.domain.dto.MyChallengeDto import MyChallengeRoomResDto, InviteCodeResponseDto
-from src.main.domain.dto.MyChallengeDto import FriendsProgress
+from src.main.domain.dto.MyChallengeDto import FriendsProgress, ParticipateResponseDto, ParticipateRequestDto
 
 router = APIRouter(
 )
@@ -31,3 +31,11 @@ async def getFrinedsProgress(roomId: int, userId: str = Depends(get_current_user
 async def get_invite_code(roomId: int, userId: str = Depends(get_current_user),
                         session: AsyncSession = Depends(get_db)):
     return MyChallengeService.get_invite_code(session, roomId)
+
+@router.post("/myChallenge/participate", response_model=ParticipateResponseDto)
+async def participate_in_challenge(
+    request: ParticipateRequestDto,
+    user_id: str = Depends(get_current_user),
+    session: AsyncSession = Depends(get_db)
+):
+    return MyChallengeService.participate_in_challenge(session, request.code, user_id)
