@@ -2,6 +2,7 @@ from typing import List
 from pydantic import BaseModel
 
 class ChallengeResponseDto(BaseModel):
+    challengeId: int
     title: str
     description: str
     tag: str
