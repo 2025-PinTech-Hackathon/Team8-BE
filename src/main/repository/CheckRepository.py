@@ -35,3 +35,15 @@ class CheckRepository:
 
         progress = (done_count / total_count) * 100
         return round(progress, 0)
+    
+    @staticmethod
+    def get_friend_ids(session: AsyncSession, member_id: str, room_id: int):
+        total_result = session.execute(
+            select(CheckTable)
+            .where(
+                CheckTable.roomId == room_id,
+                CheckTable.memberId != member_id
+            )
+        )
+
+        return total_result.scalars().all()
