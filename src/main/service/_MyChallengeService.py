@@ -3,6 +3,8 @@ from datetime import date, timedelta
 from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
+import random
+import traceback
 
 from src.main.repository.MemberChallengeRoomRepository import MemberChallengeRoomRepository
 from src.main.domain.model.ChallengeRoom import ChallengeRoom
@@ -17,6 +19,9 @@ from src.main.repository.CheckRepository import CheckRepository
 from src.main.repository.MemberRepository import MemberRepository
 from src.main.domain.dto.MyChallengeDto import Friend
 from src.main.domain.dto.MyChallengeDto import FriendsProgress
+from src.main.domain.dto.MyChallengeDto import InviteCodeResponseDto
+
+
 class MyChallengeService:
     @staticmethod
     def create_room(session: AsyncSession, memberId:str, challengeId: int):
@@ -114,3 +119,24 @@ class MyChallengeService:
         return FriendsProgress(
             friends=friendLists
             )
+    
+    @staticmethod
+    def get_invite_code(session: AsyncSession, room_id: int) -> InviteCodeResponseDto:
+        try:
+            # 코드가 이미 존재하면 가져오고, 없으면 생성
+            existing_code = ChallengeRoomRepository.get_invite_code_by_room_id(session, room_id)
+
+            if existing_code:
+                return InviteCodeResponseDto(invitedCode=existing_code.code)
+
+            # 랜덤 6자리 문자열 생성
+            new_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+
+            ChallengeRoomRepository.create_or_update_invite_code(session, room_id, new_code)
+            session.commit()
+
+            return InviteCodeResponseDto(invitedCode=new_code)
+
+        except Exception:
+            traceback.print_exc()
+            raise HTTPException(status_code=500, detail="초대 코드를 불러오지 못했습니다.")

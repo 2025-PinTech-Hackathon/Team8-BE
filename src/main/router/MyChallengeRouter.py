@@ -6,7 +6,7 @@ from src.main.domain.database import get_db
 from src.main.auth.middlewares import get_current_user
 from src.main.service._MyChallengeService import MyChallengeService
 from src.main.domain.dto.MyChallengeDto import MyChallengeReqDto
-from src.main.domain.dto.MyChallengeDto import MyChallengeRoomResDto
+from src.main.domain.dto.MyChallengeDto import MyChallengeRoomResDto, InviteCodeResponseDto
 from src.main.domain.dto.MyChallengeDto import FriendsProgress
 
 router = APIRouter(
@@ -26,3 +26,8 @@ async def getChallengeDetail(roomId: int, userId: str = Depends(get_current_user
 async def getFrinedsProgress(roomId: int, userId: str = Depends(get_current_user),
                             session: AsyncSession = Depends(get_db)):
     return MyChallengeService.getFriendProgress(session, userId, roomId)
+
+@router.get("/myChallenges/{roomId}/invite", response_model=InviteCodeResponseDto)
+async def get_invite_code(roomId: int, userId: str = Depends(get_current_user),
+                        session: AsyncSession = Depends(get_db)):
+    return MyChallengeService.get_invite_code(session, roomId)
