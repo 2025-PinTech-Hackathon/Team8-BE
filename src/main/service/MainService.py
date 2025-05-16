@@ -116,3 +116,6 @@ class MainService:
                 for challenge in challenges
             ]
         )
+
+    def get_tags(self) -> list[str]:
+        return self.repository.get_tags()

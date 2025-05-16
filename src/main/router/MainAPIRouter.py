@@ -56,3 +56,21 @@ async def get_user_challenge(
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="서버 내부 오류가 발생했습니다.")
+    
+# 태그 목록 조회
+@MainAPIRouter.get("/tags")
+async def get_tags(
+    member_id: str = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    try:
+        service = MainService(db)
+        result = service.get_tags()
+        print(f"[DEBUG] result: {result}")
+        return {
+            "tags": result
+        }
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="서버 내부 오류가 발생했습니다.")
+    
