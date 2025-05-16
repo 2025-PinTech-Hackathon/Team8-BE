@@ -30,5 +30,5 @@ class ChallengeRoom(Base):
     # Challenge와 N:1 관계
     challenge = relationship("Challenge", back_populates="challengeRoom")
 
-     # Check와 1:N 관계
+    # Check와 1:N 관계
     check = relationship("Check", back_populates="challengeRoom", cascade="all, delete-orphan")

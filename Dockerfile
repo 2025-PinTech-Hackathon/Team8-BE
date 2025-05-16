@@ -14,7 +14,7 @@ RUN poetry config virtualenvs.path "./.venv"
 
 RUN poetry install
 
-ENTRYPOINT ["poetry", "run", "pytest", "/app/src/tests", "-v"]
+ENTRYPOINT ["poetry", "run", "python", "-m", "pytest", "/app/src/tests", "-v"]
 
 
 # RUNNER
