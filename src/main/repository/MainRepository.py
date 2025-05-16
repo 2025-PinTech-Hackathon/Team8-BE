@@ -34,3 +34,8 @@ class MainRepository:
             .filter(Challenge.chTags.contains([tag]))
             .all()
         )
+    
+    # 태그 목록 조회
+    def get_tags(self):
+        # 사용자의 interest 필드에 있는 모든 태그 조회
+        return self.db.query(Member.interest).distinct().all()[0][0]
