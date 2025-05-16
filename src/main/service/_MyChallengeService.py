@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 import random
 import traceback
+import sys
 
 from src.main.repository.MemberChallengeRoomRepository import MemberChallengeRoomRepository
 from src.main.domain.model.ChallengeRoom import ChallengeRoom
@@ -20,6 +21,7 @@ from src.main.repository.MemberRepository import MemberRepository
 from src.main.domain.dto.MyChallengeDto import Friend
 from src.main.domain.dto.MyChallengeDto import FriendsProgress
 from src.main.domain.dto.MyChallengeDto import InviteCodeResponseDto
+from src.main.domain.model.ChallengeStatusEnum import ChallengeStatusEnum
 
 
 class MyChallengeService:
@@ -123,6 +125,10 @@ class MyChallengeService:
     @staticmethod
     def get_invite_code(session: AsyncSession, room_id: int) -> InviteCodeResponseDto:
         try:
+            room: ChallengeRoom = ChallengeRoomRepository.get_by_id(session, room_id)
+            if not room:
+                raise HTTPException(status_code=404, detail="해당 챌린지 방이 존재하지 않습니다.")
+
             # 코드가 이미 존재하면 가져오고, 없으면 생성
             existing_code = ChallengeRoomRepository.get_invite_code_by_room_id(session, room_id)
 
@@ -133,6 +139,11 @@ class MyChallengeService:
             new_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
 
             ChallengeRoomRepository.create_or_update_invite_code(session, room_id, new_code)
+
+            if room.status == ChallengeStatusEnum.IN_PROGRESS:
+                room.status = ChallengeStatusEnum.RECRUITING
+                session.add(room)
+
             session.commit()
 
             return InviteCodeResponseDto(invitedCode=new_code)
