@@ -14,7 +14,7 @@ fintory_mysql_port = os.getenv("FINTORY_MYSQL_PORT")
 fintory_mysql_user = os.getenv("FINTORY_MYSQL_USERNAME")
 fintory_mysql_password = os.getenv("FINTORY_MYSQL_PASSWORD")
 fintory_mysql_database = os.getenv("FINTORY_MYSQL_DB")
-database_url = f"mysql+pymysql://{fintory_mysql_user}:{fintory_mysql_password}@{fintory_mysql_url}:{fintory_mysql_port}/{fintory_mysql_database}?charset=utf8mb4"
+database_url = f"mysql+pymysql://{fintory_mysql_user}:{fintory_mysql_password}@{fintory_mysql_url}:{fintory_mysql_port}"
 
 engine = create_engine(database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
