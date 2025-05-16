@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security.api_key import APIKeyHeader
 from dotenv import load_dotenv
 from src.main.domain.database import Base, engine
 from src.router import router
@@ -13,8 +14,7 @@ from src.main.domain.model import (
     CodeTable,
     CheckTable,
     Information,
-    MemberChallengeRoom,
-    _MemberChallengeRoom
+    MemberChallengeRoom
 )
 
 load_dotenv()
@@ -32,9 +32,22 @@ async def lifespan(app: FastAPI):
     print("All tables created successfully.")
     yield
 
+auth_header = APIKeyHeader(name="Authorization", auto_error=False)
+
 app = FastAPI(  
     title="fintory-server",
-    lifespan=lifespan
+    lifespan=lifespan,
+    dependencies=[Depends(auth_header)],
+    servers=[
+        {
+            "url": "https://fintory.coldot.kr",
+            "description": "Production"
+        },
+        {
+            "url": "http://localhost:8080",
+            "description": "Local"
+        }
+    ]
 )
 
 app.add_middleware(
