@@ -14,7 +14,8 @@ from src.main.domain.model import (
     CodeTable,
     CheckTable,
     Information,
-    MemberChallengeRoom
+    MemberChallengeRoom,
+    Information
 )
 
 load_dotenv()
