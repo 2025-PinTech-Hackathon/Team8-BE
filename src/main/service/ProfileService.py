@@ -80,33 +80,4 @@ class ProfileService:
             raise HTTPException(
                 status_code=500,
                 detail="서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-            )
-
-    def get_profile(self, member_id: str) -> ProfileOutputDto:
-        try:
-            member = self.db.query(Member).filter(Member.memberId == member_id).first()
-            
-            if not member:
-                raise HTTPException(
-                    status_code=404,
-                    detail="사용자 정보를 찾을 수 없습니다."
-                )
-            
-            # interests를 한글로 변환
-            korean_interests = [InterestEnum.to_korean(interest) for interest in member.interest]
-            
-            return ProfileOutputDto(
-                name=member.name,
-                gender="여자" if member.gender else "남자",
-                age_range=AgeGroupEnum.to_korean(member.age),
-                job=JobEnum.to_korean(member.job),
-                interests=korean_interests
-            )
-            
-        except HTTPException as he:
-            raise he
-        except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail="서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
             ) 
