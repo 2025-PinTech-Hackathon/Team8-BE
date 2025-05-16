@@ -10,7 +10,7 @@ class MyChallengeSummaryDto(BaseModel):
     start: Optional[date]
     end: Optional[date]
 
-class MyChallengeListDto(BaseModel):
+class MyChallengeListResDto(BaseModel):
     memberName: str
     tags: List[str]
     myChallenges: Optional[List[MyChallengeSummaryDto]]

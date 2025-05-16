@@ -1,4 +1,5 @@
-from sqlalchemy import Column, BigInteger, String
+from sqlalchemy import Column, String, BigInteger
+from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.types import JSON
 from src.main.domain.database import Base
 from src.main.domain.model.MemberEnum import InterestEnum
