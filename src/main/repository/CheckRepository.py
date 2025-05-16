@@ -47,3 +47,15 @@ class CheckRepository:
         )
 
         return total_result.scalars().all()
+    
+    @staticmethod
+    def get_by_id(session: AsyncSession, member_id:str, room_id: int):
+        result = session.execute(
+            select(CheckTable)
+            .where(
+                CheckTable.memberId == member_id,
+                CheckTable.roomId == room_id
+            )
+        )
+
+        return result.scalars().all()

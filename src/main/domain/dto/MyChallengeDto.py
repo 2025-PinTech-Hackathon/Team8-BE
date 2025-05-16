@@ -23,6 +23,12 @@ class FriendsProgress(BaseModel):
 class InviteCodeResponseDto(BaseModel):
     invitedCode: str
 
+class Day(BaseModel):
+    date: date
+    isDone: bool
+
+class Days(BaseModel):
+    days: List[Day]
 class ParticipateResponseDto(BaseModel):
     roomId: int
     status: str
