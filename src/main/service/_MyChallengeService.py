@@ -20,7 +20,8 @@ from src.main.repository.MemberRepository import MemberRepository
 from src.main.domain.dto.MyChallengeDto import Friend
 from src.main.domain.dto.MyChallengeDto import FriendsProgress
 from src.main.domain.dto.MyChallengeDto import InviteCodeResponseDto
-
+from src.main.domain.dto.MyChallengeDto import Day
+from src.main.domain.dto.MyChallengeDto import Days
 
 class MyChallengeService:
     @staticmethod
@@ -140,3 +141,21 @@ class MyChallengeService:
         except Exception:
             traceback.print_exc()
             raise HTTPException(status_code=500, detail="초대 코드를 불러오지 못했습니다.")
+    
+    @staticmethod
+    def getFriendCalendar(session: AsyncSession, member_id: str, room_id: int):
+        #check
+        checkTable:List[CheckTable] = CheckRepository.get_by_id(session, member_id, room_id)
+
+        dayList : List[Day] = []
+
+        for check in checkTable:
+            dayDetail = Day(
+                date=check.date,
+                isDone=check.done
+            )
+
+            dayList.append(dayDetail)
+
+        return Days(
+            days=dayList)

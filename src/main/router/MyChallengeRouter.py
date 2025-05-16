@@ -8,6 +8,7 @@ from src.main.service._MyChallengeService import MyChallengeService
 from src.main.domain.dto.MyChallengeDto import MyChallengeReqDto
 from src.main.domain.dto.MyChallengeDto import MyChallengeRoomResDto, InviteCodeResponseDto
 from src.main.domain.dto.MyChallengeDto import FriendsProgress
+from src.main.domain.dto.MyChallengeDto import Days
 
 router = APIRouter(
 )
@@ -31,3 +32,8 @@ async def getFrinedsProgress(roomId: int, userId: str = Depends(get_current_user
 async def get_invite_code(roomId: int, userId: str = Depends(get_current_user),
                         session: AsyncSession = Depends(get_db)):
     return MyChallengeService.get_invite_code(session, roomId)
+
+@router.get("/myChallenges/{roomId}/calendar", response_model=Days)
+async def getCalendar(roomId: int, userId: str = Depends(get_current_user),
+                            session: AsyncSession = Depends(get_db)):
+    return MyChallengeService.getFriendCalendar(session, userId, roomId)
