@@ -11,7 +11,7 @@ from typing import Optional
 from src.main.domain.model.Member import Member
 from src.main.domain.model.Challenge import Challenge
 from src.main.domain.model.ChallengeRoom import ChallengeRoom
-from src.main.domain.dto.MyChallengeListDto import MyChallengeSummaryDto
+from src.main.domain.dto._MyChallengeListDto import MyChallengeSummaryDto
 
 from src.main.repository.CheckRepository import CheckRepository
 from src.main.repository.ChallengeRepository import ChallengeRepository
@@ -20,7 +20,7 @@ from src.main.repository.MemberChallengeRoomRepository import MemberChallengeRoo
 from src.main.repository.MemberRepository import MemberRepository
 from src. main.domain.model.ChallengeStatusEnum import ChallengeStatusEnum
 from src.main.domain.model.MemberEnum import InterestEnum
-from src.main.domain.dto.MyChallengeListDto import MyChallengeListResDto
+from src.main.domain.dto._MyChallengeListDto import MyChallengeListResDto
 
 class MyChallengeListService:
     def get_my_challenge_List(session: AsyncSession, member_id:str,tag: Optional[str], status: str ):

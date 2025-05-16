@@ -5,7 +5,7 @@ from src.main.domain.database import get_db
 from fastapi.params import Query
 from src.main.auth.middlewares import get_current_user
 
-from src.main.domain.dto.MyChallengeListDto import MyChallengeListResDto
+from src.main.domain.dto._MyChallengeListDto import MyChallengeListResDto
 from src.main.service.MyChallengeListService import MyChallengeListService
 
 from src. main.domain.model.ChallengeStatusEnum import ChallengeStatusEnum
