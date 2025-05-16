@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from src.main.domain.models import Information
+from src.main.domain.model.Information import Information
 from typing import Optional
 
 class InformationRepository:
@@ -7,4 +7,4 @@ class InformationRepository:
         self.db = db
     
     def find_by_id(self, information_id: int) -> Optional[Information]:
-        return self.db.query(Information).filter(Information.information_id == information_id).first() 
+        return self.db.query(Information).filter(Information.informationId == information_id).first() 
