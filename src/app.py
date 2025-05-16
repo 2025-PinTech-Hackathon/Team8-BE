@@ -37,7 +37,17 @@ auth_header = APIKeyHeader(name="Authorization", auto_error=False)
 app = FastAPI(  
     title="fintory-server",
     lifespan=lifespan,
-    dependencies=[Depends(auth_header)]
+    dependencies=[Depends(auth_header)],
+    servers=[
+        {
+            "url": "https://fintory.coldot.kr",
+            "description": "Production"
+        },
+        {
+            "url": "http://localhost:8080",
+            "description": "Local"
+        }
+    ]
 )
 
 app.add_middleware(
