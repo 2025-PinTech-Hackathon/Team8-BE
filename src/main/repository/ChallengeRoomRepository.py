@@ -10,3 +10,11 @@ class ChallengeRoomRepository:
         )
 
         return result.scalars().all()
+    
+    @staticmethod
+    def get_by_id(session: AsyncSession, room_id: int):
+        result = session.execute(
+            select(ChallengeRoom).where(ChallengeRoom.roomId == room_id)
+        )
+
+        return result.scalar_one_or_none() 

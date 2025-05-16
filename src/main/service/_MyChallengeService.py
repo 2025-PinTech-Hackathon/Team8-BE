@@ -8,6 +8,12 @@ from src.main.domain.model.ChallengeRoom import ChallengeRoom
 from src.main.domain.model._MemberChallengeRoom import MemberChallengeRoom
 from src.main.domain.model.CheckTable import CheckTable
 from src.main.domain.dto.MyChallengeDto import MyChallengeReqDto
+from src.main.domain.dto.MyChallengeDto import MyChallengeRoomResDto
+from src.main.repository.ChallengeRoomRepository import ChallengeRoomRepository
+from src.main.domain.model.Challenge import Challenge
+from src.main.repository.ChallengeRepository import ChallengeRepository
+from src.main.repository.CheckRepository import CheckRepository
+
 
 class MyChallengeService:
     @staticmethod
@@ -59,5 +65,27 @@ class MyChallengeService:
         )
 
         return mychallengereq
+    
+    @staticmethod
+    def getChallengeDetail(session: AsyncSession, memberId: str, roomId: int):
+        #challengeRoom을 받기
+        challengeRoom : ChallengeRoom = ChallengeRoomRepository.get_by_id(session, roomId)
+
+        #challenge 받기
+        challenge: Challenge = ChallengeRepository.get_by_challenge_id(session, challengeRoom.challengeId)
+        
+        #progress
+        progress = CheckRepository.get_progress(session, memberId, roomId)
+
+        myDetail = MyChallengeRoomResDto(
+            title=challenge.title,
+            status=challengeRoom.status,
+            content=challenge.content,
+            start=challengeRoom.startDate,
+            end=challengeRoom.endDate,
+            progress=progress,
+        )
+
+        return myDetail
 
 
