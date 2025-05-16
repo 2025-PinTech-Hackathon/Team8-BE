@@ -4,4 +4,5 @@ from .ChallengeRoom import ChallengeRoom
 from .CodeTable import CodeTable
 from .CheckTable import CheckTable
 from .Information import Information
-from .MemberChallengeRoom import member_challenge_room
+#from .MemberChallengeRoom import member_challenge_room
+from ._MemberChallengeRoom import MemberChallengeRoom
