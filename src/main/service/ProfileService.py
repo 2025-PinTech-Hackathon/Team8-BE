@@ -22,14 +22,14 @@ class ProfileService:
                     detail="해당 이름으로 이미 등록된 정보가 존재합니다."
                 )
 
-            # Enum 값 검증 및 변환
-            age_enum = profile.validate_age_range()
-            job_enum = profile.validate_job()
-            validated_interests = profile.validate_interests()
+            # Enum 값 검증 및 변환 (한글 입력값 -> 영문 코드)
+            age_enum = profile.validate_age_range()  # 예: "20대" -> AGE_20s
+            job_enum = profile.validate_job()  # 예: "대학생" -> UNIVERSITY
+            validated_interests = profile.validate_interests()  # 예: ["장학금"] -> ["SCHOLARSHIP"]
 
             # 새 멤버 생성
             new_member = Member(
-                memberId=str(uuid.uuid4()),
+                memberId=memberId,  # 이미 생성된 memberId 사용
                 name=profile.name,
                 gender=profile.gender,
                 age=age_enum,
