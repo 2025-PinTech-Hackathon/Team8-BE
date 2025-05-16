@@ -109,13 +109,13 @@ class MyChallengeService:
 
         #progress를 각각 구해야함
         for ids in friend_ids_table:
-            friend = MemberRepository.get_by_member_id(ids.memberId)
+            friend = MemberRepository.get_by_member_id(session, ids.memberId)
 
             friend_progress=CheckRepository.get_progress(session, ids.memberId, roomId)
         
             friendDetail = Friend(
                 friendId=friend.memberId,
-                friendName=friend.memberName,
+                friendName=friend.name,
                 progress=friend_progress,
             )
 
