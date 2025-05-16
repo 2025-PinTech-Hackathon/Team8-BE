@@ -20,7 +20,6 @@ async def get_user_information(
     db: Session = Depends(get_db),
 ):
     try:
-        print(f" /main/information 진입 - tag: {tag}, member_id: {member_id}")
         service = MainService(db)
         result = service.get_information_by_tag(member_id, tag)
         if result is None:
