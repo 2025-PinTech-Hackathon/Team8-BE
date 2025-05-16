@@ -1,4 +1,6 @@
+from typing import List, Optional
 from pydantic import BaseModel
+from datetime import date
 
-class CreateRoomResDto(BaseModel):
+class MyChallengeReqDto(BaseModel):
     roomId: int

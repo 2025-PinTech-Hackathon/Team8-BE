@@ -13,7 +13,8 @@ from src.main.domain.model import (
     CodeTable,
     CheckTable,
     Information,
-    MemberChallengeRoom
+    MemberChallengeRoom,
+    _MemberChallengeRoom
 )
 
 load_dotenv()

@@ -1,22 +1,35 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select, func
+from sqlalchemy.future import select
+from sqlalchemy import func
 from src.main.domain.model.CheckTable import CheckTable
 
 class CheckRepository:
     @staticmethod
-    async def get_progress(session: AsyncSession, member_id: str, room_id: int) -> float:
-        total_result = await session.execute(
+    def get_progress(session: AsyncSession, member_id: str, room_id: int) -> float:
+        # 총 체크 개수 (date와 done 모두 null이 아닌 항목만)
+        total_result = session.execute(
             select(func.count()).select_from(CheckTable)
-            .where(CheckTable.member_id == member_id, CheckTable.room_id == room_id)
+            .where(
+                CheckTable.memberId == member_id,
+                CheckTable.roomId == room_id,
+                CheckTable.date.isnot(None),
+                CheckTable.done.isnot(None)
+            )
         )
         total_count = total_result.scalar()
 
         if total_count == 0:
             return 0.0
 
-        done_result = await session.execute(
+        # 완료된 체크 개수
+        done_result = session.execute(
             select(func.count()).select_from(CheckTable)
-            .where(CheckTable.member_id == member_id, CheckTable.room_id == room_id, Check.done == True)
+            .where(
+                CheckTable.memberId == member_id,
+                CheckTable.roomId == room_id,
+                CheckTable.date.isnot(None),
+                CheckTable.done == True
+            )
         )
         done_count = done_result.scalar()
 

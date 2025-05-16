@@ -4,9 +4,9 @@ from src.main.domain.model.ChallengeRoom import ChallengeRoom
 
 class ChallengeRoomRepository:
     @staticmethod
-    async def get_by_room_id(session: AsyncSession, room_id: int):
-        result = await session.execute(
-            select(ChallengeRoom).where(ChallengeRoom.roomId == room_id)
+    def get_by_room_id(session: AsyncSession, room_id: list[int]):
+        result = session.execute(
+            select(ChallengeRoom).where(ChallengeRoom.roomId.in_(room_id))
         )
 
-        return result.scalars.all()
+        return result.scalars().all()

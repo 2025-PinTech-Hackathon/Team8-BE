@@ -4,9 +4,9 @@ from src.main.domain.model.Challenge import Challenge
 
 class ChallengeRepository:
     @staticmethod
-    async def get_by_challenge_id(session: AsyncSession, challenge_id: int):
-        result = await session.execute(
+    def get_by_challenge_id(session: AsyncSession, challenge_id: int):
+        result = session.execute(
             select(Challenge).where(Challenge.challengeId == challenge_id)
         )
 
-        return result.scalar().first()
+        return result.scalar_one_or_none() 
